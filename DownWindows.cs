@@ -60,7 +60,7 @@ namespace 七日杀Mod管理器
                         var TmpDir = Directory.CreateDirectory(Path.GetFileNameWithoutExtension(DownLoadFilePath.Name));
                         //解压到临时文件夹里
                         var ret = await Tool.RunExternalProgramAsync(Form1.WinRAR_Path, $"x {DownLoadFilePath.FullName} {TmpDir.FullName}");
-                        await TmpDir.ModProcessing($"{form1.textBox1.Text}/Mods");
+                        await TmpDir.ModProcessing($"{form1.textBox_GamePath.Text}/Mods");
 
                     }
                 };

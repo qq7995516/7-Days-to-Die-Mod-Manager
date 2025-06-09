@@ -16,7 +16,7 @@ namespace 七日杀Mod管理器
 
         private async void GameSettingWindow_Load(object sender, EventArgs e)
         {
-            ServerConfig = new FileInfo($"{Form.textBox1.Text}/serverconfig.xml");
+            ServerConfig = new FileInfo($"{Form.textBox_GamePath.Text}/serverconfig.xml");
             listView1.ColumnClick += Tool.SortListView;
             RefreshGameSetting();
         }

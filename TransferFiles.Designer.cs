@@ -29,21 +29,22 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            listView1 = new ListView();
+            listView_Sever = new ListView();
             columnHeader1 = new ColumnHeader();
             groupBox1 = new GroupBox();
-            button1 = new Button();
-            textBox5 = new TextBox();
+            button_ServerStartup = new Button();
+            textBox_debug = new TextBox();
             label3 = new Label();
             label2 = new Label();
             textBox_SP = new TextBox();
             label1 = new Label();
             textBox_SIP = new TextBox();
-            contextMenuStrip1 = new ContextMenuStrip(components);
+            contextMenuStrip_Sever = new ContextMenuStrip(components);
             选择压缩文件ToolStripMenuItem = new ToolStripMenuItem();
             开启ToolStripMenuItem = new ToolStripMenuItem();
-            contextMenuStrip2 = new ContextMenuStrip(components);
+            contextMenuStrip_Cliten = new ContextMenuStrip(components);
             下载勾选ToolStripMenuItem = new ToolStripMenuItem();
+            连接ToolStripMenuItem = new ToolStripMenuItem();
             groupBox2 = new GroupBox();
             button2 = new Button();
             label4 = new Label();
@@ -51,25 +52,27 @@
             textBox_CP = new TextBox();
             label6 = new Label();
             textBox_CIP = new TextBox();
-            listView2 = new ListView();
+            listView_Client = new ListView();
             columnHeader2 = new ColumnHeader();
+            刷新ToolStripMenuItem = new ToolStripMenuItem();
+            刷新ToolStripMenuItem1 = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
-            contextMenuStrip1.SuspendLayout();
-            contextMenuStrip2.SuspendLayout();
+            contextMenuStrip_Sever.SuspendLayout();
+            contextMenuStrip_Cliten.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
             // 
-            // listView1
+            // listView_Sever
             // 
-            listView1.CheckBoxes = true;
-            listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1 });
-            listView1.FullRowSelect = true;
-            listView1.Location = new Point(6, 98);
-            listView1.Name = "listView1";
-            listView1.Size = new Size(794, 204);
-            listView1.TabIndex = 4;
-            listView1.UseCompatibleStateImageBehavior = false;
-            listView1.View = View.Details;
+            listView_Sever.CheckBoxes = true;
+            listView_Sever.Columns.AddRange(new ColumnHeader[] { columnHeader1 });
+            listView_Sever.FullRowSelect = true;
+            listView_Sever.Location = new Point(6, 98);
+            listView_Sever.Name = "listView_Sever";
+            listView_Sever.Size = new Size(794, 204);
+            listView_Sever.TabIndex = 4;
+            listView_Sever.UseCompatibleStateImageBehavior = false;
+            listView_Sever.View = View.Details;
             // 
             // columnHeader1
             // 
@@ -78,14 +81,14 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(button1);
-            groupBox1.Controls.Add(textBox5);
+            groupBox1.Controls.Add(button_ServerStartup);
+            groupBox1.Controls.Add(textBox_debug);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(textBox_SP);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(textBox_SIP);
-            groupBox1.Controls.Add(listView1);
+            groupBox1.Controls.Add(listView_Sever);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(806, 308);
@@ -93,23 +96,23 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "服务端专用";
             // 
-            // button1
+            // button_ServerStartup
             // 
-            button1.Location = new Point(351, 35);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 11;
-            button1.Text = "启动";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            button_ServerStartup.Location = new Point(351, 35);
+            button_ServerStartup.Name = "button_ServerStartup";
+            button_ServerStartup.Size = new Size(122, 25);
+            button_ServerStartup.TabIndex = 11;
+            button_ServerStartup.Text = "开启服务端";
+            button_ServerStartup.UseVisualStyleBackColor = true;
+            button_ServerStartup.Click += button1_Click;
             // 
-            // textBox5
+            // textBox_debug
             // 
-            textBox5.Location = new Point(451, 14);
-            textBox5.Multiline = true;
-            textBox5.Name = "textBox5";
-            textBox5.Size = new Size(349, 78);
-            textBox5.TabIndex = 10;
+            textBox_debug.Location = new Point(479, 14);
+            textBox_debug.Multiline = true;
+            textBox_debug.Name = "textBox_debug";
+            textBox_debug.Size = new Size(321, 78);
+            textBox_debug.TabIndex = 10;
             // 
             // label3
             // 
@@ -152,36 +155,45 @@
             textBox_SIP.Size = new Size(167, 24);
             textBox_SIP.TabIndex = 5;
             // 
-            // contextMenuStrip1
+            // contextMenuStrip_Sever
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { 选择压缩文件ToolStripMenuItem, 开启ToolStripMenuItem });
-            contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(181, 74);
+            contextMenuStrip_Sever.Items.AddRange(new ToolStripItem[] { 选择压缩文件ToolStripMenuItem, 开启ToolStripMenuItem, 刷新ToolStripMenuItem1 });
+            contextMenuStrip_Sever.Name = "contextMenuStrip1";
+            contextMenuStrip_Sever.Size = new Size(157, 76);
             // 
             // 选择压缩文件ToolStripMenuItem
             // 
             选择压缩文件ToolStripMenuItem.Name = "选择压缩文件ToolStripMenuItem";
-            选择压缩文件ToolStripMenuItem.Size = new Size(180, 24);
+            选择压缩文件ToolStripMenuItem.Size = new Size(156, 24);
             选择压缩文件ToolStripMenuItem.Text = "选择压缩文件";
             选择压缩文件ToolStripMenuItem.Click += 选择压缩文件ToolStripMenuItem_Click;
             // 
             // 开启ToolStripMenuItem
             // 
             开启ToolStripMenuItem.Name = "开启ToolStripMenuItem";
-            开启ToolStripMenuItem.Size = new Size(180, 24);
-            开启ToolStripMenuItem.Text = "开启";
+            开启ToolStripMenuItem.Size = new Size(156, 24);
+            开启ToolStripMenuItem.Text = "开启服务端";
+            开启ToolStripMenuItem.Click += 开启ToolStripMenuItem_Click;
             // 
-            // contextMenuStrip2
+            // contextMenuStrip_Cliten
             // 
-            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { 下载勾选ToolStripMenuItem });
-            contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.Size = new Size(131, 28);
+            contextMenuStrip_Cliten.Items.AddRange(new ToolStripItem[] { 下载勾选ToolStripMenuItem, 连接ToolStripMenuItem, 刷新ToolStripMenuItem });
+            contextMenuStrip_Cliten.Name = "contextMenuStrip2";
+            contextMenuStrip_Cliten.Size = new Size(181, 98);
             // 
             // 下载勾选ToolStripMenuItem
             // 
             下载勾选ToolStripMenuItem.Name = "下载勾选ToolStripMenuItem";
-            下载勾选ToolStripMenuItem.Size = new Size(130, 24);
+            下载勾选ToolStripMenuItem.Size = new Size(180, 24);
             下载勾选ToolStripMenuItem.Text = "下载勾选";
+            下载勾选ToolStripMenuItem.Click += 下载勾选ToolStripMenuItem_Click;
+            // 
+            // 连接ToolStripMenuItem
+            // 
+            连接ToolStripMenuItem.Name = "连接ToolStripMenuItem";
+            连接ToolStripMenuItem.Size = new Size(180, 24);
+            连接ToolStripMenuItem.Text = "连接服务端";
+            连接ToolStripMenuItem.Click += 连接ToolStripMenuItem_Click;
             // 
             // groupBox2
             // 
@@ -191,7 +203,7 @@
             groupBox2.Controls.Add(textBox_CP);
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(textBox_CIP);
-            groupBox2.Controls.Add(listView2);
+            groupBox2.Controls.Add(listView_Client);
             groupBox2.Location = new Point(12, 335);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(806, 308);
@@ -203,10 +215,11 @@
             // 
             button2.Location = new Point(351, 36);
             button2.Name = "button2";
-            button2.Size = new Size(75, 23);
+            button2.Size = new Size(122, 25);
             button2.TabIndex = 12;
-            button2.Text = "连接";
+            button2.Text = "连接服务端";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // label4
             // 
@@ -249,22 +262,34 @@
             textBox_CIP.Size = new Size(167, 24);
             textBox_CIP.TabIndex = 5;
             // 
-            // listView2
+            // listView_Client
             // 
-            listView2.CheckBoxes = true;
-            listView2.Columns.AddRange(new ColumnHeader[] { columnHeader2 });
-            listView2.FullRowSelect = true;
-            listView2.Location = new Point(6, 98);
-            listView2.Name = "listView2";
-            listView2.Size = new Size(794, 204);
-            listView2.TabIndex = 4;
-            listView2.UseCompatibleStateImageBehavior = false;
-            listView2.View = View.Details;
+            listView_Client.CheckBoxes = true;
+            listView_Client.Columns.AddRange(new ColumnHeader[] { columnHeader2 });
+            listView_Client.FullRowSelect = true;
+            listView_Client.Location = new Point(6, 98);
+            listView_Client.Name = "listView_Client";
+            listView_Client.Size = new Size(794, 204);
+            listView_Client.TabIndex = 4;
+            listView_Client.UseCompatibleStateImageBehavior = false;
+            listView_Client.View = View.Details;
             // 
             // columnHeader2
             // 
             columnHeader2.Text = "文件路径";
             columnHeader2.Width = 700;
+            // 
+            // 刷新ToolStripMenuItem
+            // 
+            刷新ToolStripMenuItem.Name = "刷新ToolStripMenuItem";
+            刷新ToolStripMenuItem.Size = new Size(180, 24);
+            刷新ToolStripMenuItem.Text = "刷新";
+            // 
+            // 刷新ToolStripMenuItem1
+            // 
+            刷新ToolStripMenuItem1.Name = "刷新ToolStripMenuItem1";
+            刷新ToolStripMenuItem1.Size = new Size(156, 24);
+            刷新ToolStripMenuItem1.Text = "刷新";
             // 
             // TransferFiles
             // 
@@ -278,15 +303,15 @@
             Load += TransferFiles_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            contextMenuStrip1.ResumeLayout(false);
-            contextMenuStrip2.ResumeLayout(false);
+            contextMenuStrip_Sever.ResumeLayout(false);
+            contextMenuStrip_Cliten.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
-        private ListView listView1;
+        private ListView listView_Sever;
         private ColumnHeader columnHeader1;
         private GroupBox groupBox1;
         private Label label2;
@@ -294,21 +319,24 @@
         private Label label1;
         private TextBox textBox_SIP;
         private Label label3;
-        private ContextMenuStrip contextMenuStrip1;
+        private ContextMenuStrip contextMenuStrip_Sever;
         private ToolStripMenuItem 选择压缩文件ToolStripMenuItem;
-        private ContextMenuStrip contextMenuStrip2;
+        private ContextMenuStrip contextMenuStrip_Cliten;
         private GroupBox groupBox2;
         private Label label4;
         private Label label5;
         private TextBox textBox_CP;
         private Label label6;
         private TextBox textBox_CIP;
-        private ListView listView2;
+        private ListView listView_Client;
         private ColumnHeader columnHeader2;
         private ToolStripMenuItem 开启ToolStripMenuItem;
         private ToolStripMenuItem 下载勾选ToolStripMenuItem;
-        private TextBox textBox5;
-        private Button button1;
+        private TextBox textBox_debug;
+        private Button button_ServerStartup;
         private Button button2;
+        private ToolStripMenuItem 连接ToolStripMenuItem;
+        private ToolStripMenuItem 刷新ToolStripMenuItem1;
+        private ToolStripMenuItem 刷新ToolStripMenuItem;
     }
 }

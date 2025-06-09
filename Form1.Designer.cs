@@ -2,10 +2,6 @@
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
 
         /// <summary>
         ///  Clean up any resources being used.
@@ -26,11 +22,11 @@
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        public void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
             label1 = new Label();
-            textBox1 = new TextBox();
+            textBox_GamePath = new TextBox();
             button1 = new Button();
             listView1 = new ListView();
             columnHeader1 = new ColumnHeader();
@@ -78,14 +74,14 @@
             label1.TabIndex = 0;
             label1.Text = "七日杀文件夹";
             // 
-            // textBox1
+            // textBox_GamePath
             // 
-            textBox1.Location = new Point(105, 25);
-            textBox1.Name = "textBox1";
-            textBox1.ReadOnly = true;
-            textBox1.Size = new Size(441, 24);
-            textBox1.TabIndex = 1;
-            textBox1.TextChanged += textBox1_TextChanged;
+            textBox_GamePath.Location = new Point(105, 25);
+            textBox_GamePath.Name = "textBox_GamePath";
+            textBox_GamePath.ReadOnly = true;
+            textBox_GamePath.Size = new Size(441, 24);
+            textBox_GamePath.TabIndex = 1;
+            textBox_GamePath.TextChanged += textBox1_TextChanged;
             // 
             // button1
             // 
@@ -359,7 +355,7 @@
             Controls.Add(label2);
             Controls.Add(listView1);
             Controls.Add(button1);
-            Controls.Add(textBox1);
+            Controls.Add(textBox_GamePath);
             Controls.Add(label1);
             Name = "Form1";
             Text = "七日杀Mod管理器1.3.4";
@@ -373,41 +369,42 @@
 
         #endregion
 
-        private Label label1;
-        public TextBox textBox1;
-        private Button button1;
-        private ListView listView1;
-        private Label label2;
-        private ColumnHeader columnHeader1;
-        private ColumnHeader columnHeader2;
-        private ColumnHeader columnHeader3;
-        private ColumnHeader columnHeader4;
-        private ColumnHeader columnHeader5;
-        private ColumnHeader columnHeader6;
-        private ContextMenuStrip contextMenuStrip1;
-        private ToolStripMenuItem 添加ToolStripMenuItem;
-        private ToolStripMenuItem 删除ToolStripMenuItem;
-        private ToolStripMenuItem 刷新ToolStripMenuItem;
-        private Label label3;
-        private Button button2;
-        private ToolStripMenuItem 压缩包ToolStripMenuItem;
-        private ToolStripMenuItem 文件夹ToolStripMenuItem;
-        private Label label4;
-        private Button button4;
+        public Label label1;
+        public TextBox textBox_GamePath;
+        public Button button1;
+        public ListView listView1;
+        public Label label2;
+        public ColumnHeader columnHeader1;
+        public ColumnHeader columnHeader2;
+        public ColumnHeader columnHeader3;
+        public ColumnHeader columnHeader4;
+        public ColumnHeader columnHeader5;
+        public ColumnHeader columnHeader6;
+        public ContextMenuStrip contextMenuStrip1;
+        public ToolStripMenuItem 添加ToolStripMenuItem;
+        public ToolStripMenuItem 删除ToolStripMenuItem;
+        public ToolStripMenuItem 刷新ToolStripMenuItem;
+        public Label label3;
+        public Button button2;
+        public ToolStripMenuItem 压缩包ToolStripMenuItem;
+        public ToolStripMenuItem 文件夹ToolStripMenuItem;
+        public Label label4;
+        public Button button4;
         public ListView listView2;
-        private ColumnHeader columnHeader7;
-        private ColumnHeader columnHeader8;
-        private ColumnHeader columnHeader9;
-        private ColumnHeader columnHeader10;
-        private Label label9;
-        private ColumnHeader columnHeader11;
-        private ContextMenuStrip contextMenuStrip2;
-        private ToolStripMenuItem 添加ToolStripMenuItem1;
-        private ToolStripMenuItem 删除选中ToolStripMenuItem;
-        private Button button3;
-        private Button button5;
-        private Button button6;
-        private ToolStripMenuItem 打包勾选ModToolStripMenuItem;
-        private Button button7;
+        public ColumnHeader columnHeader7;
+        public ColumnHeader columnHeader8;
+        public ColumnHeader columnHeader9;
+        public ColumnHeader columnHeader10;
+        public Label label9;
+        public ColumnHeader columnHeader11;
+        public ContextMenuStrip contextMenuStrip2;
+        public ToolStripMenuItem 添加ToolStripMenuItem1;
+        public ToolStripMenuItem 删除选中ToolStripMenuItem;
+        public Button button3;
+        public Button button5;
+        public Button button6;
+        public ToolStripMenuItem 打包勾选ModToolStripMenuItem;
+        public Button button7;
+        private System.ComponentModel.IContainer components;
     }
 }

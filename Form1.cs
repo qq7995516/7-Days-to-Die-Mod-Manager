@@ -15,6 +15,7 @@ namespace 七日杀Mod管理器
         public DownloadWindow? DW = null;
         public ArchiveManager? AM = null;
         public static List<FileInfo> DataFileInfos = default;
+        public static Form1 form1 = null;
         /// <summary>
         /// 存放缓存的文件
         /// </summary>
@@ -26,19 +27,20 @@ namespace 七日杀Mod管理器
 
         public async void Form1_Load(object sender, EventArgs e)
         {
+            form1 = this;
             listView1.ColumnClick += Tool.SortListView;
             listView2.ColumnClick += Tool.SortListView;
 
-            textBox1.Text = Settings1.Default.GameFolderPath;
-            if (Directory.Exists(textBox1.Text))
+            textBox_GamePath.Text = Settings1.Default.GameFolderPath;
+            if (Directory.Exists(textBox_GamePath.Text))
             {
                 //检查Mods文件夹是否存在
-                if (!Directory.Exists($"{textBox1.Text}/Mods"))
-                    Directory.CreateDirectory($"{textBox1.Text}/Mods");
+                if (!Directory.Exists($"{textBox_GamePath.Text}/Mods"))
+                    Directory.CreateDirectory($"{textBox_GamePath.Text}/Mods");
                 //刷新Mods列表
-                listView1.RefreshModListView(textBox1.Text);
+                listView1.RefreshModListView(textBox_GamePath.Text);
                 //读取 7DaysToDie_Data 文件夹的所有文件
-                var str1 = $"{textBox1.Text}/7DaysToDie_Data";
+                var str1 = $"{textBox_GamePath.Text}/7DaysToDie_Data";
                 var DataDirectoryInfo = new DirectoryInfo(str1);
                 //加载Data文件夹中的文件
                 if (DataDirectoryInfo.Exists)
@@ -53,19 +55,19 @@ namespace 七日杀Mod管理器
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if (new DirectoryInfo(textBox1.Text).Exists)
+            if (new DirectoryInfo(textBox_GamePath.Text).Exists)
             {
-                Settings1.Default.GameFolderPath = textBox1.Text;
+                Settings1.Default.GameFolderPath = textBox_GamePath.Text;
                 Settings1.Default.Save();
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var GamePath = Tool.SelectFolder(textBox1.Text);
+            var GamePath = Tool.SelectFolder(textBox_GamePath.Text);
             if (GamePath != null && Directory.Exists(GamePath))
             {
-                textBox1.Text = GamePath;
+                textBox_GamePath.Text = GamePath;
                 Settings1.Default.GameFolderPath = GamePath;
                 Settings1.Default.Save();
                 listView1.RefreshModListView(GamePath);
@@ -75,7 +77,7 @@ namespace 七日杀Mod管理器
         private void 删除ToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
-            if (!Directory.Exists(textBox1.Text))
+            if (!Directory.Exists(textBox_GamePath.Text))
             {
                 MessageBox.Show("请先选择正确的七日杀文件夹再删除mod");
                 return;
@@ -85,22 +87,22 @@ namespace 七日杀Mod管理器
                 return;
             foreach (ListViewItem item in listView1.CheckedItems)
             {
-                if (Directory.Exists($"{textBox1.Text}/Mods/{item.Text}"))
-                    Directory.Delete($"{textBox1.Text}/Mods/{item.Text}", true);
+                if (Directory.Exists($"{textBox_GamePath.Text}/Mods/{item.Text}"))
+                    Directory.Delete($"{textBox_GamePath.Text}/Mods/{item.Text}", true);
             }
             //刷新
-            listView1.RefreshModListView(textBox1.Text);
+            listView1.RefreshModListView(textBox_GamePath.Text);
         }
 
         private void 刷新ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!Directory.Exists(textBox1.Text))
+            if (!Directory.Exists(textBox_GamePath.Text))
             {
                 MessageBox.Show("请先选择正确的七日杀文件夹再刷新");
                 return;
             }
             //刷新
-            listView1.RefreshModListView(textBox1.Text);
+            listView1.RefreshModListView(textBox_GamePath.Text);
         }
 
 
@@ -118,22 +120,33 @@ namespace 七日杀Mod管理器
                 return;
             foreach (var item in files)
             {
-                //以压缩文件名创建一个文件夹
-                var TmpDir = Directory.CreateDirectory(Path.GetFileNameWithoutExtension(item));
-                //解压到临时文件夹里
-                var ret = await Tool.RunExternalProgramAsync(WinRAR_Path, $"x {item} {TmpDir.FullName}");
-                await TmpDir.ModProcessing($"{textBox1.Text}/Mods");
+                await item.InstallTheCompressedPackage(WinRAR_Path);
+                ////以压缩文件名创建一个文件夹
+                //var TmpDir = Directory.CreateDirectory(Path.GetFileNameWithoutExtension(item));
+                ////解压到临时文件夹里
+                //var ret = await Tool.RunExternalProgramAsync(WinRAR_Path, $"x {item} {TmpDir.FullName}");
+                //if (ret.ExitCode != 0)
+                //{
+                //    MessageBox.Show($"解压失败: {item}");
+                //    continue;
+                //}
+                ////处理解压好的Mod
+                //await TmpDir.ModProcessing($"{textBox1.Text}/Mods");
             }
-            listView1.RefreshModListView(textBox1.Text);
+            listView1.RefreshModListView(textBox_GamePath.Text);
         }
+
 
         private async void 文件夹ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dirs = Tool.SelectFolder(AppDomain.CurrentDomain.BaseDirectory);
-            if (dirs != null)
-                await new DirectoryInfo(dirs).ModProcessing($"{textBox1.Text}/Mods");
-            listView1.RefreshModListView(textBox1.Text);
+            await dirs?.InstallFolderModAsync($"{textBox_GamePath.Text}/Mods");
+            //if (dirs != null)
+            //    await new DirectoryInfo(dirs).ModProcessing($"{textBox1.Text}/Mods");
+
+            listView1.RefreshModListView(textBox_GamePath.Text);
         }
+
 
 
         private void button4_Click(object sender, EventArgs e)
@@ -286,20 +299,21 @@ namespace 七日杀Mod管理器
             var tip = $@"1.许多列表的功能都在右键菜单中.
 2.游戏设置功能:双击你要修改的设置即可.
 3.下载窗口:按住Alt+←或者→可以让页面前进或后退.
-4.备份列表中打上勾的选项才会执行备份,否则不会执行备份";
+4.备份列表中打上勾的选项才会执行备份,否则不会执行备份
+5.许多功能都在右键菜单中";
             var tips = new Tips(tip);
             tips.Show();
         }
 
         private async void 打包勾选ModToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var Todie = new DirectoryInfo($"{textBox1.Text}/Mods");
+            var Todie = new DirectoryInfo($"{textBox_GamePath.Text}/Mods");
             if (Todie.Exists)
             {
                 var listViewItems = listView1.CheckedItems.Cast<ListViewItem>().ToList();
                 //获取到勾选项对应的文件夹
                 var directoryInfos = listViewItems.Select(d => GetDirectoryInfo(d, Todie)).ToList();
-                var TMPModPath = $"{textBox1.Text}/Mods/Mods_{DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")}.rar";
+                var TMPModPath = $"{textBox_GamePath.Text}/Mods/Mods_{DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")}.rar";
                 var mod = "";
                 directoryInfos.ForEach(d => mod += $" \"{d}\"");
 

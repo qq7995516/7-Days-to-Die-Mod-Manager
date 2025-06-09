@@ -1,15 +1,254 @@
 ﻿using Microsoft.Win32;
 using System.Collections;
 using System.Diagnostics;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Xml.Linq;
 
 namespace 七日杀Mod管理器
 {
     public static class Tool
     {
+        #region json
+
+        /// <summary>
+        /// 将对象序列化为字节数组
+        /// </summary>
+        /// <typeparam name="T">要序列化的对象类型</typeparam>
+        /// <param name="obj">要序列化的对象</param>
+        /// <param name="options">JSON序列化选项（可选）</param>
+        /// <returns>序列化后的字节数组</returns>
+        public static byte[] ToBytes<T>(this T obj, JsonSerializerOptions? options = null)
+        {
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+
+            try
+            {
+                return JsonSerializer.SerializeToUtf8Bytes(obj, options);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"序列化失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 将字节数组反序列化为对象
+        /// </summary>
+        /// <typeparam name="T">要反序列化的对象类型</typeparam>
+        /// <param name="bytes">字节数组</param>
+        /// <param name="options">JSON反序列化选项（可选）</param>
+        /// <returns>反序列化后的对象</returns>
+        public static T ToObject<T>(this byte[] bytes, JsonSerializerOptions? options = null)
+        {
+            if (bytes == null) throw new ArgumentNullException(nameof(bytes));
+            if (bytes.Length == 0) throw new ArgumentException("字节数组不能为空", nameof(bytes));
+
+            try
+            {
+                var result = JsonSerializer.Deserialize<T>(bytes, options);
+                if (result == null)
+                {
+                    throw new InvalidOperationException("反序列化结果为null");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"反序列化失败: {ex.Message}", ex);
+            }
+        }
+
+        #endregion
+
+        #region socket通讯
+        public static async Task SendAllAsync(this Socket socket, byte[] data)
+        {
+            int totalSent = 0;
+
+            while (totalSent < data.Length)
+            {
+                // 创建剩余数据的片段
+                var remaining = new ArraySegment<byte>(data, totalSent, data.Length - totalSent);
+
+                // 发送剩余数据
+                int sent = await socket.SendAsync(remaining, SocketFlags.None);
+
+                if (sent == 0)
+                {
+                    throw new Exception("连接已断开");
+                }
+
+                totalSent += sent;
+                Console.WriteLine($"已发送: {totalSent}/{data.Length} 字节");
+            }
+        }
+        /// <summary>
+        /// 接收完整的数据包（带长度前缀）
+        /// </summary>
+        public static async Task<byte[]> ReceiveAllAsync(this Socket socket)
+        {
+            // 先接收数据长度（4字节）
+            var lengthBytes = new byte[4];
+            await ReceiveExactAsync(socket, lengthBytes);
+            var dataLength = BitConverter.ToInt32(lengthBytes, 0);
+
+            if (dataLength <= 0 || dataLength > 100 * 1024 * 1024) // 限制最大100MB
+            {
+                throw new InvalidDataException($"无效的数据长度: {dataLength}");
+            }
+
+            // 接收实际数据
+            var data = new byte[dataLength];
+            await ReceiveExactAsync(socket, data);
+
+            return data;
+        }
+
+        /// <summary>
+        /// 确保接收指定长度的数据
+        /// </summary>
+        private static async Task ReceiveExactAsync(Socket socket, byte[] buffer)
+        {
+            int totalReceived = 0;
+
+            while (totalReceived < buffer.Length)
+            {
+                var remaining = new ArraySegment<byte>(buffer, totalReceived, buffer.Length - totalReceived);
+                int received = await socket.ReceiveAsync(remaining, SocketFlags.None);
+
+                if (received == 0)
+                    throw new InvalidOperationException("连接已断开");
+
+                totalReceived += received;
+            }
+        }
+
+        /// <summary>
+        /// 用于通讯协议,分辨请求类型
+        /// </summary>
+        public class CommunicationProtocol
+        {
+            public enum type
+            {
+                /// <summary>
+                /// 文本消息
+                /// </summary>
+                Message = -1,
+                /// <summary>
+                /// 获取文件列表
+                /// </summary>
+                GetFileList = 0,
+                /// <summary>
+                /// 下载文件列表
+                /// </summary>
+                DownloadFile = 1,
+                /// <summary>
+                /// 响应文件数据
+                /// </summary>
+                ResponseData = 2,
+
+            }
+
+            /// <summary>
+            /// 附带的文本信息
+            /// </summary>
+            public string Message { get; set; } = default;
+            /// <summary>
+            /// 错误信息
+            /// </summary>
+            public string error { get; set; } = default;
+            /// <summary>
+            /// 客户端已经拥有的文件列表
+            /// </summary>
+            public List<string> ClientAllFiles = new();
+            /// <summary>
+            /// 客户端请求下载的文件
+            /// </summary>
+            public string ClitenDownFile { get; set; } = "";
+            /// <summary>
+            /// 服务器能提供下载的所有文件列表
+            /// </summary>
+            public List<string> SeverAllFiles = new();
+            /// <summary>
+            /// 传递的文件数据,键为文件名，值为文件内容的字节数组
+            /// </summary>
+            public KeyValuePair<string, byte[]>? FileData = null;
+
+            /// <summary>
+            /// 请求类型
+            /// </summary>
+            public type ProtocolType { get; set; } = type.GetFileList;
+            public CommunicationProtocol(type type)
+            {
+                ProtocolType = type;
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 保存数据为文件
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static async Task SaveToFile(this string filePath, byte[] bytes)
+        {
+            try
+            {
+                //确保目录存在
+                var dir = Path.GetDirectoryName(filePath);
+                if (dir != null && !Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                //写入文件
+                await File.WriteAllBytesAsync(filePath, bytes);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"保存文件 {filePath} 失败: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// 安装压缩包
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static async Task InstallTheCompressedPackage(this string fileName, string WinRAR_Path)
+        {
+            FileInfo fileInfo = new FileInfo(fileName);
+            //以压缩文件名创建一个文件夹
+            var TmpDir = Directory.CreateDirectory(Path.GetFileNameWithoutExtension(fileInfo.Name));
+            //解压到临时文件夹里
+            var ret = await Tool.RunExternalProgramAsync(WinRAR_Path, $"x {fileInfo.FullName} {TmpDir.FullName}");
+            if (ret.ExitCode == 0)
+            {
+                await TmpDir.ModProcessing($"{Form1.form1.textBox_GamePath.Text}/Mods");
+            }
+            //Form1.form1.listView1.RefreshModListView(Form1.form1.textBox1.Text);
+        }
+
+        /// <summary>
+        /// 安装文件夹Mod
+        /// </summary>
+        /// <param name="folderPath"></param>
+        /// <param name="gameModPath"></param>
+        /// <returns></returns>
+        public static async Task InstallFolderModAsync(this string folderPath, string gameModPath)
+        {
+            if (Directory.Exists(folderPath))
+            {
+                var dir = new DirectoryInfo(folderPath);
+                //处理解压好的Mod
+                await dir.ModProcessing(gameModPath);
+            }
+        }
+
         /// <summary>
         /// 下载 WebView2 运行时安装程序
         /// </summary>

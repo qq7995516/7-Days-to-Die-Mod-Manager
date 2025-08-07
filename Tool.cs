@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace 七日杀Mod管理器
@@ -740,36 +742,43 @@ namespace 七日杀Mod管理器
             foreach (var item in mods)
             {
                 var ModFolderName = Path.GetFileName(item);
-                var it = new ListViewItem();
-                it.Text = ModFolderName;
-                var Modinfo = await GetModInfoAsync($"{item}/ModInfo.xml");
-                if (Modinfo != null)
+                try
                 {
-                    //mod名称
-                    it.SubItems.Add(Modinfo.Name);
-                    //简介
-                    it.SubItems.Add(Modinfo.Description);
-                    //版本
-                    it.SubItems.Add(Modinfo.Version);
-                    //作者
-                    it.SubItems.Add(Modinfo.Author);
-                    //安装情况
-                    it.SubItems.Add("正确");
+                    var it = new ListViewItem();
+                    it.Text = ModFolderName;
+                    var Modinfo = await GetModInfoAsync($"{item}/ModInfo.xml");
+                    if (Modinfo != null)
+                    {
+                        //mod名称
+                        it.SubItems.Add(Modinfo.Name);
+                        //简介
+                        it.SubItems.Add(Modinfo.Description);
+                        //版本
+                        it.SubItems.Add(Modinfo.Version);
+                        //作者
+                        it.SubItems.Add(Modinfo.Author);
+                        //安装情况
+                        it.SubItems.Add("正确");
+                    }
+                    else
+                    {
+                        //mod名称
+                        it.SubItems.Add("");
+                        //简介
+                        it.SubItems.Add("");
+                        //版本
+                        it.SubItems.Add("");
+                        //作者
+                        it.SubItems.Add("");
+                        //安装情况
+                        it.SubItems.Add("错误");
+                    }
+                    listView.Items.Add(it);
                 }
-                else
+                catch (Exception)
                 {
-                    //mod名称
-                    it.SubItems.Add("");
-                    //简介
-                    it.SubItems.Add("");
-                    //版本
-                    it.SubItems.Add("");
-                    //作者
-                    it.SubItems.Add("");
-                    //安装情况
-                    it.SubItems.Add("错误");
+                    MessageBox.Show(item + "-无法读取该Mod,有错误!请检查该Mod");
                 }
-                listView.Items.Add(it);
             }
         }
 
@@ -824,6 +833,81 @@ namespace 七日杀Mod管理器
         public static bool WarningWindow(string text = "确定吗?", string caption = "警告!") =>
              MessageBox.Show(text: text, caption: caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
 
+        /// <summary>
+        /// 筛选出文件夹内指定名称最新修改的文件
+        /// </summary>
+        /// <param name="DirectoryPath"></param>
+        /// <param name="FileNameFilter"></param>
+        /// <returns></returns>
+        public static FileInfo GetLastWriteTimeFile(this string DirectoryPath, string FileNameFilter, bool RecurseSubdirectories = false)
+        {
+            var logfile = new DirectoryInfo(DirectoryPath).GetFiles(FileNameFilter, new EnumerationOptions() { RecurseSubdirectories = RecurseSubdirectories }).OrderByDescending(d => d.LastWriteTime).First();
+            return logfile;
+        }
+
+        /// <summary>
+        /// 获取七日杀报错信息并显示在记事本中
+        /// </summary>
+        /// <param name="logfiles"></param>
+        /// <returns></returns>
+        public static async Task GetErrorInfoAndShow(this FileInfo logfiles)
+        {
+            //读取文件内容,筛选出报错信息,再去重
+            var errorLines = logfiles.OpenText().ReadToEnd().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(line => line.IsErrorMessage()).ToList()
+                //去重
+                .Distinct();
+            //在桌面创建一个文本文件
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var outputFilePath = Path.Combine(desktopPath, $"七日杀报错信息_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
+            await File.WriteAllLinesAsync(outputFilePath, errorLines);
+            //打开该文件
+            await Tool.RunExternalProgramAsync(WindowsBuiltInProgram.notepad.ToString(), outputFilePath);
+            //弹窗提醒用户 已保存到桌面 ,3秒后自动关闭弹窗
+            var msgBox = new Form
+            {
+                Width = 400,
+                Height = 200,
+                Text = "提示",
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            var label = new Label
+            {
+                Text = "报错信息已保存到桌面",
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            msgBox.Controls.Add(label);
+            msgBox.Show();
+            await Task.Delay(3000);
+            msgBox.Close();
+        }
+
+        /// <summary>
+        /// 用资源管理器打开文件夹并选中文件
+        /// </summary>
+        /// <param name="filePath"></param>
+        public static void OpenFolderAndSelectFile(this string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                // 获取文件所在的目录
+                string directory = Path.GetDirectoryName(filePath);
+                if (directory != null && Directory.Exists(directory))
+                {
+                    // 使用资源管理器打开目录并选中文件
+                    Process.Start("explorer.exe", $"/select,\"{filePath}\"");
+                }
+                else
+                {
+                    MessageBox.Show("文件所在的目录不存在。", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("指定的文件不存在。", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
 
         /// <summary>
@@ -1298,6 +1382,35 @@ namespace 七日杀Mod管理器
 
         #endregion
 
+
+        #region 提取错误信息
+
+        public static bool IsErrorMessage(this string line)
+        {
+            // 判断是否以 "ERROR:" 开头
+            if (line.Trim().StartsWith("ERROR:"))
+            {
+                return true;
+            }
+
+            // 使用正则表达式判断是否包含 " ERR " (注意空格以避免误判)
+            if (Regex.IsMatch(line, @"\sERR\s"))
+            {
+                return true;
+            }
+
+            // 判断是否包含特定的错误短语
+            if (line.Contains("Fallback handler could not load library"))
+            {
+                return true;
+            }
+
+            // 您可以在这里添加更多自定义的错误信息判断规则
+
+            return false;
+        }
+
+        #endregion
 
     }
 }

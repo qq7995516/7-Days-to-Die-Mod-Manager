@@ -4,6 +4,7 @@ using System.Net;
 using System.Security.AccessControl;
 using static 七日杀Mod管理器.Tool;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace 七日杀Mod管理器
 {
@@ -331,6 +332,72 @@ namespace 七日杀Mod管理器
         private async void button7_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private async void 直接获取ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //服务端直接获取报错信息
+            //output_log_dedi__
+            if (!Directory.Exists(textBox_GamePath.Text))
+            {
+                MessageBox.Show("请先选择正确的七日杀文件夹再获取");
+                return;
+            }
+            //筛选出output_log_dedi_*.txt文件列表中最新修改的文件.
+            var logfile = textBox_GamePath.Text.GetLastWriteTimeFile("output_log_dedi_*.txt");
+            //获取报错信息并弹出窗口显示
+            await logfile.GetErrorInfoAndShow();
+        }
+
+        private async void 打开文件夹ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //服务端
+            //打开七日杀文件夹
+            if (!Directory.Exists(textBox_GamePath.Text))
+            {
+                MessageBox.Show("请先选择正确的七日杀文件夹再打开");
+                return;
+            }
+            //筛选出output_log_dedi_*.txt文件列表中最新修改的文件.
+            var logfile = textBox_GamePath.Text.GetLastWriteTimeFile("output_log_dedi_*.txt");
+            //打开该文件所在的文件夹,并选中该文件
+            logfile.FullName.OpenFolderAndSelectFile();
+        }
+
+        private async void 直接获取ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //玩家端直接获取报错信息
+            //C:\Users\23060\AppData\Roaming\7DaysToDie\logs
+            //检查是否存在玩家端日志文件夹
+            var playerLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "7DaysToDie", "logs");
+            if (!Directory.Exists(playerLogPath))
+            {
+                MessageBox.Show("玩家端日志文件夹不存在，请先运行游戏生成日志文件。");
+                return;
+            }
+            //output_log_client_*.txt
+
+            var logfile = playerLogPath.GetLastWriteTimeFile("output_log_client_*.txt");
+            //获取报错信息并弹出窗口显示
+            await logfile.GetErrorInfoAndShow();
+        }
+
+        private void 打开文件夹ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //玩家端
+            //C:\Users\23060\AppData\Roaming\7DaysToDie\logs
+            //打开玩家端日志文件夹
+            var playerLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "7DaysToDie", "logs");
+            if (!Directory.Exists(playerLogPath))
+            {
+                MessageBox.Show("玩家端日志文件夹不存在，请先运行游戏生成日志文件。");
+                return;
+            }
+            //筛选出output_log_client_*.txt文件列表中最新修改的文件.
+
+            var logfile = playerLogPath.GetLastWriteTimeFile("output_log_client_*.txt");
+            //打开该文件所在的文件夹,并选中该文件
+            logfile.FullName.OpenFolderAndSelectFile();
         }
     }
 }

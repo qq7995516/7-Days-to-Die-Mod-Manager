@@ -42,6 +42,13 @@
             删除ToolStripMenuItem = new ToolStripMenuItem();
             刷新ToolStripMenuItem = new ToolStripMenuItem();
             打包勾选ModToolStripMenuItem = new ToolStripMenuItem();
+            获取报错信息ToolStripMenuItem = new ToolStripMenuItem();
+            服务端ToolStripMenuItem = new ToolStripMenuItem();
+            直接获取ToolStripMenuItem = new ToolStripMenuItem();
+            打开文件夹ToolStripMenuItem = new ToolStripMenuItem();
+            玩家端ToolStripMenuItem = new ToolStripMenuItem();
+            直接获取ToolStripMenuItem1 = new ToolStripMenuItem();
+            打开文件夹ToolStripMenuItem1 = new ToolStripMenuItem();
             label2 = new Label();
             label3 = new Label();
             button2 = new Button();
@@ -137,9 +144,9 @@
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { 添加ToolStripMenuItem, 删除ToolStripMenuItem, 刷新ToolStripMenuItem, 打包勾选ModToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { 添加ToolStripMenuItem, 删除ToolStripMenuItem, 刷新ToolStripMenuItem, 打包勾选ModToolStripMenuItem, 获取报错信息ToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(160, 100);
+            contextMenuStrip1.Size = new Size(160, 124);
             // 
             // 添加ToolStripMenuItem
             // 
@@ -182,6 +189,55 @@
             打包勾选ModToolStripMenuItem.Size = new Size(159, 24);
             打包勾选ModToolStripMenuItem.Text = "打包勾选Mod";
             打包勾选ModToolStripMenuItem.Click += 打包勾选ModToolStripMenuItem_Click;
+            // 
+            // 获取报错信息ToolStripMenuItem
+            // 
+            获取报错信息ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 服务端ToolStripMenuItem, 玩家端ToolStripMenuItem });
+            获取报错信息ToolStripMenuItem.Name = "获取报错信息ToolStripMenuItem";
+            获取报错信息ToolStripMenuItem.Size = new Size(159, 24);
+            获取报错信息ToolStripMenuItem.Text = "获取报错信息";
+            // 
+            // 服务端ToolStripMenuItem
+            // 
+            服务端ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 直接获取ToolStripMenuItem, 打开文件夹ToolStripMenuItem });
+            服务端ToolStripMenuItem.Name = "服务端ToolStripMenuItem";
+            服务端ToolStripMenuItem.Size = new Size(117, 24);
+            服务端ToolStripMenuItem.Text = "服务端";
+            // 
+            // 直接获取ToolStripMenuItem
+            // 
+            直接获取ToolStripMenuItem.Name = "直接获取ToolStripMenuItem";
+            直接获取ToolStripMenuItem.Size = new Size(143, 24);
+            直接获取ToolStripMenuItem.Text = "直接获取";
+            直接获取ToolStripMenuItem.Click += 直接获取ToolStripMenuItem_Click;
+            // 
+            // 打开文件夹ToolStripMenuItem
+            // 
+            打开文件夹ToolStripMenuItem.Name = "打开文件夹ToolStripMenuItem";
+            打开文件夹ToolStripMenuItem.Size = new Size(143, 24);
+            打开文件夹ToolStripMenuItem.Text = "打开文件夹";
+            打开文件夹ToolStripMenuItem.Click += 打开文件夹ToolStripMenuItem_Click;
+            // 
+            // 玩家端ToolStripMenuItem
+            // 
+            玩家端ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 直接获取ToolStripMenuItem1, 打开文件夹ToolStripMenuItem1 });
+            玩家端ToolStripMenuItem.Name = "玩家端ToolStripMenuItem";
+            玩家端ToolStripMenuItem.Size = new Size(117, 24);
+            玩家端ToolStripMenuItem.Text = "玩家端";
+            // 
+            // 直接获取ToolStripMenuItem1
+            // 
+            直接获取ToolStripMenuItem1.Name = "直接获取ToolStripMenuItem1";
+            直接获取ToolStripMenuItem1.Size = new Size(143, 24);
+            直接获取ToolStripMenuItem1.Text = "直接获取";
+            直接获取ToolStripMenuItem1.Click += 直接获取ToolStripMenuItem1_Click;
+            // 
+            // 打开文件夹ToolStripMenuItem1
+            // 
+            打开文件夹ToolStripMenuItem1.Name = "打开文件夹ToolStripMenuItem1";
+            打开文件夹ToolStripMenuItem1.Size = new Size(143, 24);
+            打开文件夹ToolStripMenuItem1.Text = "打开文件夹";
+            打开文件夹ToolStripMenuItem1.Click += 打开文件夹ToolStripMenuItem1_Click;
             // 
             // label2
             // 
@@ -358,7 +414,7 @@
             Controls.Add(textBox_GamePath);
             Controls.Add(label1);
             Name = "Form1";
-            Text = "七日杀Mod管理器1.3.4";
+            Text = "七日杀Mod管理器1.3.6";
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;
             contextMenuStrip1.ResumeLayout(false);
@@ -406,5 +462,12 @@
         public ToolStripMenuItem 打包勾选ModToolStripMenuItem;
         public Button button7;
         private System.ComponentModel.IContainer components;
+        private ToolStripMenuItem 获取报错信息ToolStripMenuItem;
+        private ToolStripMenuItem 服务端ToolStripMenuItem;
+        private ToolStripMenuItem 玩家端ToolStripMenuItem;
+        private ToolStripMenuItem 直接获取ToolStripMenuItem;
+        private ToolStripMenuItem 打开文件夹ToolStripMenuItem;
+        private ToolStripMenuItem 直接获取ToolStripMenuItem1;
+        private ToolStripMenuItem 打开文件夹ToolStripMenuItem1;
     }
 }
